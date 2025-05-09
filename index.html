@@ -3,740 +3,789 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mais Angola - Investimentos</title>
+    <title>Mais Angola - Plataforma de Investimentos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111;
+            color: white;
+        }
+        
         .gradient-bg {
-            background: linear-gradient(135deg, #b91c1c 0%, #000000 50%, #facc15 100%);
+            background: linear-gradient(135deg, #b91c1c 0%, #d97706 50%, #000000 100%);
         }
-        .blur-effect {
-            backdrop-filter: blur(10px);
-            background-color: rgba(0, 0, 0, 0.5);
+        
+        .investment-card {
+            transition: all 0.3s ease;
+            border: 1px solid #d97706;
         }
+        
         .investment-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(185, 28, 28, 0.3);
+            box-shadow: 0 10px 20px rgba(217, 119, 6, 0.3);
         }
-        .hidden-content {
+        
+        .btn-primary {
+            background-color: #b91c1c;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #991b1b;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #d97706;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .tab-content {
             display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .floating-alert {
+            animation: floatUp 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+        }
+        
+        @keyframes floatUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <!-- Navigation -->
-    <nav class="gradient-bg py-4 px-6 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-coins text-yellow-400 text-2xl"></i>
-                <span class="text-xl font-bold">MAIS ANGOLA</span>
-            </div>
-            <div class="hidden md:flex space-x-6">
-                <a href="#" class="hover:text-yellow-400 transition">Início</a>
-                <a href="#plans" class="hover:text-yellow-400 transition">Planos</a>
-                <a href="#about" class="hover:text-yellow-400 transition">Sobre</a>
-                <a href="#contact" class="hover:text-yellow-400 transition">Contactos</a>
-            </div>
-            <div class="flex space-x-4">
-                <button onclick="showLogin()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition">Login</button>
-                <button onclick="showRegister()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg transition">Registar</button>
-            </div>
-            <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4">
-            <a href="#" class="block py-2 hover:text-yellow-400">Início</a>
-            <a href="#plans" class="block py-2 hover:text-yellow-400">Planos</a>
-            <a href="#about" class="block py-2 hover:text-yellow-400">Sobre</a>
-            <a href="#contact" class="block py-2 hover:text-yellow-400">Contactos</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="relative h-96 flex items-center justify-center">
-        <div class="absolute inset-0 bg-black opacity-70"></div>
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center"></div>
-        <div class="relative z-10 text-center px-4">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4">INVISTA NO SEU FUTURO</h1>
-            <p class="text-xl md:text-2xl mb-8">Rendimentos diários de até 40% durante 60 dias</p>
-            <button onclick="showRegister()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-8 rounded-full text-lg transition transform hover:scale-105">
-                Começar Agora
-            </button>
-        </div>
-    </section>
-
-    <!-- Login Modal -->
+<body>
+    <!-- Auth Modals -->
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="blur-effect rounded-lg p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Login</h2>
-                <button onclick="hideLogin()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
-            </div>
-            <form id="loginForm" class="space-y-4">
-                <div>
-                    <label for="loginEmail" class="block mb-2">Email ou Telefone</label>
-                    <input type="text" id="loginEmail" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+        <div class="bg-gray-900 rounded-lg p-8 w-full max-w-md relative">
+            <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-center text-yellow-500">Login</h2>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label for="loginEmail" class="block mb-2 text-sm font-medium">Email</label>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
                 </div>
-                <div>
-                    <label for="loginPassword" class="block mb-2">Senha</label>
-                    <input type="password" id="loginPassword" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <div class="mb-6">
+                    <label for="loginPassword" class="block mb-2 text-sm font-medium">Senha</label>
+                    <input type="password" id="loginPassword" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
                 </div>
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="rememberMe" class="mr-2">
-                        <label for="rememberMe">Lembrar-me</label>
-                    </div>
-                    <a href="#" class="text-yellow-400 hover:underline">Esqueceu a senha?</a>
-                </div>
-                <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition">
-                    Entrar
-                </button>
+                <button type="submit" class="w-full btn-primary py-2 px-4 rounded-md font-medium">Entrar</button>
             </form>
-            <div class="mt-4 text-center">
-                <p>Não tem uma conta? <button onclick="switchToRegister()" class="text-yellow-400 hover:underline">Registe-se</button></p>
-            </div>
+            <p class="mt-4 text-center text-sm text-gray-400">
+                Não tem uma conta? <a href="#" onclick="showRegisterModal()" class="text-yellow-500 hover:underline">Registre-se</a>
+            </p>
         </div>
     </div>
 
-    <!-- Register Modal -->
     <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="blur-effect rounded-lg p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Criar Conta</h2>
-                <button onclick="hideRegister()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
-            </div>
-            <form id="registerForm" class="space-y-4">
-                <div>
-                    <label for="regName" class="block mb-2">Nome Completo</label>
-                    <input type="text" id="regName" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+        <div class="bg-gray-900 rounded-lg p-8 w-full max-w-md relative">
+            <button onclick="closeModal('registerModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-center text-yellow-500">Criar Conta</h2>
+            <form id="registerForm">
+                <div class="mb-4">
+                    <label for="registerName" class="block mb-2 text-sm font-medium">Nome Completo</label>
+                    <input type="text" id="registerName" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
                 </div>
-                <div>
-                    <label for="regPhone" class="block mb-2">Telefone</label>
-                    <input type="text" id="regPhone" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <div class="mb-4">
+                    <label for="registerEmail" class="block mb-2 text-sm font-medium">Email</label>
+                    <input type="email" id="registerEmail" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
                 </div>
-                <div>
-                    <label for="regEmail" class="block mb-2">Email</label>
-                    <input type="email" id="regEmail" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <div class="mb-4">
+                    <label for="registerPhone" class="block mb-2 text-sm font-medium">Telefone</label>
+                    <input type="tel" id="registerPhone" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
                 </div>
-                <div>
-                    <label for="regPassword" class="block mb-2">Senha</label>
-                    <input type="password" id="regPassword" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <div class="mb-4">
+                    <label for="registerPassword" class="block mb-2 text-sm font-medium">Senha</label>
+                    <input type="password" id="registerPassword" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
                 </div>
-                <div>
-                    <label for="regConfirmPassword" class="block mb-2">Confirmar Senha</label>
-                    <input type="password" id="regConfirmPassword" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                <div class="mb-6">
+                    <label for="registerReferral" class="block mb-2 text-sm font-medium">Código de Convite (Opcional)</label>
+                    <input type="text" id="registerReferral" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500">
                 </div>
-                <div>
-                    <label for="regInviteCode" class="block mb-2">Código de Convite (Opcional)</label>
-                    <input type="text" id="regInviteCode" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" id="regTerms" class="mr-2" required>
-                    <label for="regTerms">Concordo com os <a href="#" class="text-yellow-400 hover:underline">Termos e Condições</a></label>
-                </div>
-                <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition">
-                    Criar Conta
-                </button>
+                <button type="submit" class="w-full btn-primary py-2 px-4 rounded-md font-medium">Registrar</button>
             </form>
-            <div class="mt-4 text-center">
-                <p>Já tem uma conta? <button onclick="switchToLogin()" class="text-yellow-400 hover:underline">Faça login</button></p>
+            <p class="mt-4 text-center text-sm text-gray-400">
+                Já tem uma conta? <a href="#" onclick="showLoginModal()" class="text-yellow-500 hover:underline">Faça login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Alert Notification -->
+    <div id="alertNotification" class="fixed top-4 right-4 z-50 hidden">
+        <div class="floating-alert bg-gray-800 border-l-4 border-yellow-500 text-white px-6 py-4 shadow-lg max-w-sm">
+            <div class="flex items-center">
+                <div class="mr-4">
+                    <i class="fas fa-exclamation-circle text-yellow-500 text-xl"></i>
+                </div>
+                <div>
+                    <p id="alertMessage" class="text-sm"></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Investment Plans -->
-    <section id="plans" class="py-16 px-4 bg-gray-900">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Nossos Planos de Investimento</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Plan 1 -->
-                <div class="investment-card bg-gray-800 rounded-xl p-6 shadow-lg border border-red-600 transition duration-300">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-yellow-400">PLANO INICIAL</h3>
-                        <div class="mt-4">
-                            <span class="text-4xl font-bold">7.000</span>
-                            <span class="text-xl">KZ</span>
-                        </div>
+    <!-- Main Content -->
+    <div id="authContent" class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-black py-4 px-6 shadow-lg">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-coins text-black text-xl"></i>
                     </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>40% de retorno diário</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Período de 60 dias</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Total de retorno: 16.800 KZ</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Bônus de indicação: 40%</span>
-                        </li>
-                    </ul>
-                    <button onclick="showRegister()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                        Investir Agora
-                    </button>
+                    <h1 class="text-2xl font-bold text-white">MAIS <span class="text-yellow-500">ANGOLA</span></h1>
                 </div>
-
-                <!-- Plan 2 -->
-                <div class="investment-card bg-gray-800 rounded-xl p-6 shadow-lg border border-red-600 transition duration-300">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-yellow-400">PLANO PRATA</h3>
-                        <div class="mt-4">
-                            <span class="text-4xl font-bold">14.000</span>
-                            <span class="text-xl">KZ</span>
-                        </div>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>40% de retorno diário</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Período de 60 dias</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Total de retorno: 33.600 KZ</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Bônus de indicação: 40%</span>
-                        </li>
-                    </ul>
-                    <button onclick="showRegister()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                        Investir Agora
-                    </button>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="nav-link text-white hover:text-yellow-500">Início</a>
+                    <a href="#" class="nav-link text-white hover:text-yellow-500">Planos</a>
+                    <a href="#" class="nav-link text-white hover:text-yellow-500">Sobre</a>
+                    <a href="#" class="nav-link text-white hover:text-yellow-500">Contato</a>
                 </div>
-
-                <!-- Plan 3 -->
-                <div class="investment-card bg-gray-800 rounded-xl p-6 shadow-lg border border-red-600 transition duration-300">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-yellow-400">PLANO OURO</h3>
-                        <div class="mt-4">
-                            <span class="text-4xl font-bold">28.000</span>
-                            <span class="text-xl">KZ</span>
-                        </div>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>40% de retorno diário</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Período de 60 dias</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Total de retorno: 67.200 KZ</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Bônus de indicação: 40%</span>
-                        </li>
-                    </ul>
-                    <button onclick="showRegister()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                        Investir Agora
-                    </button>
-                </div>
-
-                <!-- Plan 4 -->
-                <div class="investment-card bg-gray-800 rounded-xl p-6 shadow-lg border border-red-600 transition duration-300">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-yellow-400">PLANO DIAMANTE</h3>
-                        <div class="mt-4">
-                            <span class="text-4xl font-bold">56.000</span>
-                            <span class="text-xl">KZ</span>
-                        </div>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>40% de retorno diário</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Período de 60 dias</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Total de retorno: 134.400 KZ</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Bônus de indicação: 40%</span>
-                        </li>
-                    </ul>
-                    <button onclick="showRegister()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                        Investir Agora
-                    </button>
-                </div>
-
-                <!-- Plan 5 -->
-                <div class="investment-card bg-gray-800 rounded-xl p-6 shadow-lg border border-red-600 transition duration-300">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-yellow-400">PLANO VIP</h3>
-                        <div class="mt-4">
-                            <span class="text-4xl font-bold">112.000</span>
-                            <span class="text-xl">KZ</span>
-                        </div>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>40% de retorno diário</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Período de 60 dias</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Total de retorno: 268.800 KZ</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Bônus de indicação: 40%</span>
-                        </li>
-                    </ul>
-                    <button onclick="showRegister()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                        Investir Agora
-                    </button>
-                </div>
-
-                <!-- Plan 6 -->
-                <div class="investment-card bg-gray-800 rounded-xl p-6 shadow-lg border border-red-600 transition duration-300">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-yellow-400">PLANO PREMIUM</h3>
-                        <div class="mt-4">
-                            <span class="text-4xl font-bold">224.000</span>
-                            <span class="text-xl">KZ</span>
-                        </div>
-                    </div>
-                    <ul class="space-y-3 mb-8">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>40% de retorno diário</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Período de 60 dias</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Total de retorno: 537.600 KZ</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                            <span>Bônus de indicação: 40%</span>
-                        </li>
-                    </ul>
-                    <button onclick="showRegister()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition">
-                        Investir Agora
+                <div class="flex items-center space-x-4">
+                    <button onclick="showLoginModal()" class="btn-primary py-2 px-6 rounded-md font-medium">Login</button>
+                    <button onclick="showRegisterModal()" class="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-6 rounded-md font-medium">Registrar</button>
+                    <button id="mobileMenuBtn" class="md:hidden text-white">
+                        <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
-        </div>
-    </section>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="md:hidden hidden mt-4 pb-4">
+                <a href="#" class="block py-2 text-white hover:text-yellow-500">Início</a>
+                <a href="#" class="block py-2 text-white hover:text-yellow-500">Planos</a>
+                <a href="#" class="block py-2 text-white hover:text-yellow-500">Sobre</a>
+                <a href="#" class="block py-2 text-white hover:text-yellow-500">Contato</a>
+            </div>
+        </nav>
 
-    <!-- Payment Info -->
-    <section id="payment" class="py-16 px-4 bg-gray-800">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Como Investir</h2>
-            <div class="max-w-4xl mx-auto bg-gray-900 rounded-xl p-8 shadow-lg">
+        <!-- Hero Section -->
+        <section class="gradient-bg py-20">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">Invista no seu futuro com <span class="text-yellow-300">Mais Angola</span></h1>
+                        <p class="text-lg mb-8 text-gray-200">Junte-se a milhares de investidores que estão multiplicando seu capital com nossos planos de investimento exclusivos.</p>
+                        <div class="flex space-x-4">
+                            <button onclick="showRegisterModal()" class="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-8 rounded-md font-medium text-lg">Começar Agora</button>
+                            <button class="bg-transparent border-2 border-white text-white py-3 px-8 rounded-md font-medium text-lg hover:bg-white hover:text-black transition">Saiba Mais</button>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Investimento" class="rounded-lg shadow-2xl">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Investment Plans -->
+        <section class="py-16 bg-black">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 text-white">Nossos <span class="text-yellow-500">Planos de Investimento</span></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="investment-card bg-gray-900 rounded-lg p-6">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-bold text-yellow-500 mb-2">Plano Básico</h3>
+                            <p class="text-gray-400">Ideal para iniciantes</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <span class="text-4xl font-bold text-white">7.000 KZ</span>
+                            <span class="block text-gray-400 mt-2">Investimento mínimo</span>
+                        </div>
+                        <ul class="mb-8 space-y-3">
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>40% de retorno diário</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Período de 60 dias</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Suporte 24/7</span>
+                            </li>
+                        </ul>
+                        <button onclick="showRegisterModal()" class="w-full btn-primary py-3 rounded-md font-medium">Investir Agora</button>
+                    </div>
+                    
+                    <div class="investment-card bg-gray-900 rounded-lg p-6 border-2 border-yellow-500 transform scale-105">
+                        <div class="text-center mb-6">
+                            <div class="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full inline-block mb-2">MAIS POPULAR</div>
+                            <h3 class="text-xl font-bold text-yellow-500 mb-2">Plano Intermediário</h3>
+                            <p class="text-gray-400">Para crescimento acelerado</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <span class="text-4xl font-bold text-white">28.000 KZ</span>
+                            <span class="block text-gray-400 mt-2">Investimento recomendado</span>
+                        </div>
+                        <ul class="mb-8 space-y-3">
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>40% de retorno diário</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Período de 60 dias</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Bônus de indicação</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Suporte prioritário</span>
+                            </li>
+                        </ul>
+                        <button onclick="showRegisterModal()" class="w-full btn-primary py-3 rounded-md font-medium">Investir Agora</button>
+                    </div>
+                    
+                    <div class="investment-card bg-gray-900 rounded-lg p-6">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-bold text-yellow-500 mb-2">Plano Avançado</h3>
+                            <p class="text-gray-400">Para investidores experientes</p>
+                        </div>
+                        <div class="text-center mb-6">
+                            <span class="text-4xl font-bold text-white">224.000 KZ</span>
+                            <span class="block text-gray-400 mt-2">Investimento máximo</span>
+                        </div>
+                        <ul class="mb-8 space-y-3">
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>40% de retorno diário</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Período de 60 dias</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Bônus exclusivo</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Consultoria personalizada</span>
+                            </li>
+                            <li class="flex items-center text-gray-300">
+                                <i class="fas fa-check-circle text-yellow-500 mr-2"></i>
+                                <span>Suporte VIP</span>
+                            </li>
+                        </ul>
+                        <button onclick="showRegisterModal()" class="w-full btn-primary py-3 rounded-md font-medium">Investir Agora</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="py-16 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 text-white">Como <span class="text-yellow-500">Funciona</span></h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6">
+                        <div class="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-user-plus text-black text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">1. Crie sua conta</h3>
+                        <p class="text-gray-400">Registre-se gratuitamente e tenha acesso à nossa plataforma de investimentos.</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-money-bill-wave text-black text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">2. Faça seu investimento</h3>
+                        <p class="text-gray-400">Escolha um dos nossos planos e envie o comprovante de transferência.</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <div class="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-chart-line text-black text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">3. Receba seus lucros</h3>
+                        <p class="text-gray-400">Acompanhe seus rendimentos diários e saque quando quiser.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="py-16 bg-black">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl font-bold text-center mb-12 text-white">Depoimentos de <span class="text-yellow-500">Clientes</span></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-gray-900 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-black"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Carlos Manuel</h4>
+                                <p class="text-yellow-500 text-sm">Investidor desde 2022</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300">"Em apenas 3 meses já recuperei meu investimento inicial e continuo recebendo lucros diários. Recomendo!"</p>
+                        <div class="flex mt-4 text-yellow-500">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-black"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">Ana Silva</h4>
+                                <p class="text-yellow-500 text-sm">Investidora desde 2023</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300">"Comecei com o plano básico e hoje já estou no avançado. A plataforma é segura e os pagamentos são sempre pontuais."</p>
+                        <div class="flex mt-4 text-yellow-500">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-user text-black"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white">João Baptista</h4>
+                                <p class="text-yellow-500 text-sm">Investidor desde 2023</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300">"Além dos lucros dos meus investimentos, ganho bônus por indicar amigos. É uma ótima oportunidade de renda extra."</p>
+                        <div class="flex mt-4 text-yellow-500">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="gradient-bg py-16">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Pronto para multiplicar seu dinheiro?</h2>
+                <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">Junte-se a Mais Angola hoje mesmo e comece a receber retornos diários em seus investimentos.</p>
+                <button onclick="showRegisterModal()" class="bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-8 rounded-md font-medium text-lg shadow-lg">Começar Agora</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-black py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-coins text-black text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">MAIS <span class="text-yellow-500">ANGOLA</span></h3>
+                        </div>
+                        <p class="text-gray-400">A plataforma de investimentos que mais cresce em Angola, oferecendo retornos lucrativos e seguros para nossos clientes.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-4">Links Rápidos</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-yellow-500">Início</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-yellow-500">Planos</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-yellow-500">Sobre Nós</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-yellow-500">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-4">Contato</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-phone-alt mr-2 text-yellow-500"></i>
+                                <span>+244 937 591 295</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-envelope mr-2 text-yellow-500"></i>
+                                <span>suporte@maisangola.com</span>
+                            </li>
+                            <li class="flex items-center text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-2 text-yellow-500"></i>
+                                <span>Luanda, Angola</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-white mb-4">Redes Sociais</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                <i class="fab fa-telegram-plane"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
+                    <p>&copy; 2023 Mais Angola. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Dashboard Content (Hidden until login) -->
+    <div id="dashboardContent" class="min-h-screen hidden">
+        <!-- Dashboard Navigation -->
+        <nav class="bg-black py-4 px-6 shadow-lg">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-coins text-black text-xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white">MAIS <span class="text-yellow-500">ANGOLA</span></h1>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" onclick="showTab('dashboard')" class="nav-link text-white hover:text-yellow-500">Dashboard</a>
+                    <a href="#" onclick="showTab('invest')" class="nav-link text-white hover:text-yellow-500">Investir</a>
+                    <a href="#" onclick="showTab('withdraw')" class="nav-link text-white hover:text-yellow-500">Sacar</a>
+                    <a href="#" onclick="showTab('referrals')" class="nav-link text-white hover:text-yellow-500">Indicações</a>
+                    <a href="#" onclick="showTab('transactions')" class="nav-link text-white hover:text-yellow-500">Transações</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center bg-gray-800 px-4 py-2 rounded-full">
+                        <div class="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center mr-2">
+                            <i class="fas fa-user text-black text-xs"></i>
+                        </div>
+                        <span id="userNameNav" class="text-white text-sm">Usuário</span>
+                    </div>
+                    <button onclick="logout()" class="btn-primary py-2 px-4 rounded-md font-medium">Sair</button>
+                    <button id="dashboardMobileMenuBtn" class="md:hidden text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Dashboard Mobile Menu -->
+            <div id="dashboardMobileMenu" class="md:hidden hidden mt-4 pb-4">
+                <a href="#" onclick="showTab('dashboard')" class="block py-2 text-white hover:text-yellow-500">Dashboard</a>
+                <a href="#" onclick="showTab('invest')" class="block py-2 text-white hover:text-yellow-500">Investir</a>
+                <a href="#" onclick="showTab('withdraw')" class="block py-2 text-white hover:text-yellow-500">Sacar</a>
+                <a href="#" onclick="showTab('referrals')" class="block py-2 text-white hover:text-yellow-500">Indicações</a>
+                <a href="#" onclick="showTab('transactions')" class="block py-2 text-white hover:text-yellow-500">Transações</a>
+            </div>
+        </nav>
+
+        <!-- Dashboard Tabs -->
+        <div class="container mx-auto px-6 py-8">
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gray-900 rounded-lg p-6 border-l-4 border-yellow-500">
+                        <h3 class="text-lg font-medium text-gray-400 mb-2">Saldo Disponível</h3>
+                        <p id="availableBalance" class="text-2xl font-bold text-white">0 KZ</p>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-6 border-l-4 border-red-500">
+                        <h3 class="text-lg font-medium text-gray-400 mb-2">Total Investido</h3>
+                        <p id="totalInvested" class="text-2xl font-bold text-white">0 KZ</p>
+                    </div>
+                    <div class="bg-gray-900 rounded-lg p-6 border-l-4 border-green-500">
+                        <h3 class="text-lg font-medium text-gray-400 mb-2">Lucro Total</h3>
+                        <p id="totalProfit" class="text-2xl font-bold text-white">0 KZ</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-gray-900 rounded-lg p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">Meus Investimentos Ativos</h3>
+                            <button onclick="showTab('invest')" class="btn-primary py-2 px-4 rounded-md text-sm font-medium">Novo Investimento</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-800">
+                                        <th class="py-3 px-4 text-left text-gray-400 font-medium">Plano</th>
+                                        <th class="py-3 px-4 text-left text-gray-400 font-medium">Valor</th>
+                                        <th class="py-3 px-4 text-left text-gray-400 font-medium">Início</th>
+                                        <th class="py-3 px-4 text-left text-gray-400 font-medium">Término</th>
+                                        <th class="py-3 px-4 text-left text-gray-400 font-medium">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activeInvestments">
+                                    <tr>
+                                        <td colspan="5" class="py-8 text-center text-gray-500">Nenhum investimento ativo</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900 rounded-lg p-6">
+                        <h3 class="text-xl font-bold text-white mb-6">Informações de Pagamento</h3>
+                        <div class="bg-gray-800 rounded-lg p-4 mb-6">
+                            <h4 class="text-sm font-medium text-gray-400 mb-2">Para fazer novos investimentos:</h4>
+                            <p class="text-sm text-gray-300 mb-2">Banco: BAI</p>
+                            <p class="text-sm text-gray-300 mb-2">IBAN: 004300001029490210111</p>
+                            <p class="text-sm text-gray-300">Titular: Wilma Ferreira Agostinho</p>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-gray-400 mb-2">Envie o comprovante para:</h4>
+                            <p class="text-sm text-gray-300 mb-2">WhatsApp: +244 937 591 295</p>
+                            <p class="text-sm text-gray-300">Email: suporte@maisangola.com</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">*Seu saldo será creditado após confirmação do pagamento.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invest Tab -->
+            <div id="investTab" class="tab-content">
+                <h2 class="text-2xl font-bold text-white mb-6">Fazer Novo Investimento</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <h3 class="text-xl font-bold text-yellow-400 mb-4">Passo 1: Transferência Bancária</h3>
-                        <p class="mb-4">Faça uma transferência para a seguinte conta bancária:</p>
-                        <div class="bg-gray-800 p-4 rounded-lg mb-4">
-                            <p class="font-bold">IBAN: 004300001029490210111</p>
-                            <p>Titular: MAIS ANGOLA INVESTIMENTOS</p>
+                        <div class="bg-gray-900 rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Escolha o Valor do Investimento</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center">
+                                    <input type="radio" id="plan1" name="investmentPlan" value="7000" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-700">
+                                    <label for="plan1" class="ml-3 block text-gray-300">
+                                        <span class="font-medium">7.000 KZ</span> - Retorno diário de 2.800 KZ (40%)
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="plan2" name="investmentPlan" value="14000" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-700">
+                                    <label for="plan2" class="ml-3 block text-gray-300">
+                                        <span class="font-medium">14.000 KZ</span> - Retorno diário de 5.600 KZ (40%)
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="plan3" name="investmentPlan" value="28000" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-700">
+                                    <label for="plan3" class="ml-3 block text-gray-300">
+                                        <span class="font-medium">28.000 KZ</span> - Retorno diário de 11.200 KZ (40%)
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="plan4" name="investmentPlan" value="56000" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-700">
+                                    <label for="plan4" class="ml-3 block text-gray-300">
+                                        <span class="font-medium">56.000 KZ</span> - Retorno diário de 22.400 KZ (40%)
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="plan5" name="investmentPlan" value="112000" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-700">
+                                    <label for="plan5" class="ml-3 block text-gray-300">
+                                        <span class="font-medium">112.000 KZ</span> - Retorno diário de 44.800 KZ (40%)
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="radio" id="plan6" name="investmentPlan" value="224000" class="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-700">
+                                    <label for="plan6" class="ml-3 block text-gray-300">
+                                        <span class="font-medium">224.000 KZ</span> - Retorno diário de 89.600 KZ (40%)
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <p class="mb-4">O valor investido só aparecerá no seu perfil após confirmação do pagamento pela nossa equipe.</p>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-yellow-400 mb-4">Passo 2: Enviar Comprovativo</h3>
-                        <p class="mb-4">Após realizar o pagamento, envie o comprovativo para o seguinte número de WhatsApp:</p>
-                        <div class="bg-gray-800 p-4 rounded-lg mb-4">
-                            <p class="font-bold">WhatsApp: +244 937 591 295</p>
-                        </div>
-                        <p class="mb-4">Inclua no mensagem:</p>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li>Seu nome completo</li>
-                            <li>Valor investido</li>
-                            <li>Plano escolhido</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="mt-8 text-center">
-                    <p class="text-lg">Após verificação do pagamento (normalmente em até 24 horas), seu investimento será ativado e você começará a receber seus rendimentos diários.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Referral Program -->
-    <section id="referral" class="py-16 px-4 bg-gray-900">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Programa de Indicação</h2>
-            <div class="max-w-4xl mx-auto">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-gray-800 rounded-xl p-6 text-center">
-                        <div class="bg-yellow-500 text-black w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-user-plus text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Indique Amigos</h3>
-                        <p>Compartilhe seu link único de indicação com amigos e familiares.</p>
-                    </div>
-                    <div class="bg-gray-800 rounded-xl p-6 text-center">
-                        <div class="bg-yellow-500 text-black w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-money-bill-wave text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Ganhe 40%</h3>
-                        <p>Receba 40% do valor depositado por cada pessoa que se registrar com seu link.</p>
-                    </div>
-                    <div class="bg-gray-800 rounded-xl p-6 text-center">
-                        <div class="bg-yellow-500 text-black w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-chart-line text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">Ganhe Mais 40%</h3>
-                        <p>Receba mais 40% quando seus indicados fizerem investimentos.</p>
-                    </div>
-                </div>
-                <div class="mt-12 text-center">
-                    <p class="text-lg mb-6">Crie sua rede e aumente seus ganhos exponencialmente!</p>
-                    <button onclick="showRegister()" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-8 rounded-full text-lg transition transform hover:scale-105">
-                        Começar a Indicar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-16 px-4 bg-gray-800">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Sobre Nós</h2>
-            <div class="max-w-4xl mx-auto">
-                <div class="bg-gray-900 rounded-xl p-8 shadow-lg">
-                    <h3 class="text-xl font-bold text-yellow-400 mb-4">MAIS ANGOLA INVESTIMENTOS</h3>
-                    <p class="mb-4">Somos uma plataforma de investimentos comprometida em oferecer as melhores oportunidades de crescimento financeiro para os angolanos.</p>
-                    <p class="mb-4">Nossa missão é democratizar o acesso a investimentos de alto retorno, antes disponíveis apenas para grandes investidores.</p>
-                    <p class="mb-4">Com um sistema transparente e pagamentos diários, ajudamos nossos clientes a alcançar a independência financeira.</p>
-                    <div class="mt-8">
-                        <h4 class="text-lg font-bold mb-4">Por que escolher a Mais Angola?</h4>
-                        <ul class="list-disc pl-5 space-y-2">
-                            <li>Retornos diários garantidos de 40%</li>
-                            <li>Planos acessíveis a partir de 7.000 KZ</li>
-                            <li>Programa de indicação com ganhos generosos</li>
-                            <li>Suporte dedicado 24/7</li>
-                            <li>Transparência e segurança em todas as transações</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-16 px-4 bg-gray-900">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">Contactos</h2>
-            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-gray-800 rounded-xl p-6">
-                    <h3 class="text-xl font-bold text-yellow-400 mb-4">Informações de Contacto</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <i class="fas fa-phone-alt text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-bold">Telefone/WhatsApp</p>
-                                <p>+244 937 591 295</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-envelope text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-bold">Email</p>
-                                <p>suporte@maisangola.com</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-clock text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <p class="font-bold">Horário de Atendimento</p>
-                                <p>Segunda a Sábado, 8:00 - 20:00</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-xl p-6">
-                    <h3 class="text-xl font-bold text-yellow-400 mb-4">Redes Sociais</h3>
-                    <div class="flex space-x-4 mb-6">
-                        <a href="#" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 transition">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                    <h3 class="text-xl font-bold text-yellow-400 mb-4">Newsletter</h3>
-                    <p class="mb-4">Inscreva-se para receber nossas atualizações e promoções especiais.</p>
-                    <form class="flex">
-                        <input type="email" placeholder="Seu email" class="bg-gray-700 px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 w-full">
-                        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-r-lg transition">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="gradient-bg py-8 px-4">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <i class="fas fa-coins text-yellow-400 text-2xl"></i>
-                        <span class="text-xl font-bold">MAIS ANGOLA</span>
-                    </div>
-                    <p>Sua plataforma de investimentos confiável, oferecendo os melhores retornos do mercado.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Links Rápidos</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-yellow-400 transition">Início</a></li>
-                        <li><a href="#plans" class="hover:text-yellow-400 transition">Planos</a></li>
-                        <li><a href="#about" class="hover:text-yellow-400 transition">Sobre Nós</a></li>
-                        <li><a href="#contact" class="hover:text-yellow-400 transition">Contactos</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-yellow-400 transition">Termos de Serviço</a></li>
-                        <li><a href="#" class="hover:text-yellow-400 transition">Política de Privacidade</a></li>
-                        <li><a href="#" class="hover:text-yellow-400 transition">Isenção de Responsabilidade</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Métodos de Pagamento</h3>
-                    <div class="flex flex-wrap gap-2">
-                        <div class="bg-gray-800 p-2 rounded-lg">
-                            <i class="fas fa-university text-xl"></i>
-                        </div>
-                        <div class="bg-gray-800 p-2 rounded-lg">
-                            <i class="fab fa-cc-mastercard text-xl"></i>
-                        </div>
-                        <div class="bg-gray-800 p-2 rounded-lg">
-                            <i class="fab fa-cc-visa text-xl"></i>
-                        </div>
-                        <div class="bg-gray-800 p-2 rounded-lg">
-                            <i class="fas fa-mobile-alt text-xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p>&copy; 2023 Mais Angola Investimentos. Todos os direitos reservados.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- User Dashboard (Hidden until login) -->
-    <div id="userDashboard" class="hidden-content fixed inset-0 bg-gray-900 z-50 overflow-y-auto">
-        <div class="min-h-screen">
-            <!-- Dashboard Header -->
-            <header class="gradient-bg py-4 px-6 shadow-lg">
-                <div class="container mx-auto flex justify-between items-center">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-coins text-yellow-400 text-2xl"></i>
-                        <span class="text-xl font-bold">MAIS ANGOLA</span>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="hidden md:flex items-center space-x-2">
-                            <i class="fas fa-wallet text-yellow-400"></i>
-                            <span id="userBalance">0 KZ</span>
-                        </div>
-                        <div class="relative group">
-                            <button class="flex items-center space-x-2">
-                                <img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 rounded-full">
-                                <span id="userName">Usuário</span>
-                                <i class="fas fa-chevron-down text-sm"></i>
-                            </button>
-                            <div class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg py-2 z-50 hidden group-hover:block">
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-700">Perfil</a>
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-700">Configurações</a>
-                                <a href="#" onclick="logout()" class="block px-4 py-2 hover:bg-gray-700 text-red-400">Sair</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Dashboard Content -->
-            <div class="container mx-auto py-8 px-4">
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <!-- Sidebar -->
-                    <div class="lg:col-span-1 bg-gray-800 rounded-lg p-4">
-                        <nav class="space-y-2">
-                            <a href="#" class="flex items-center space-x-3 p-3 bg-gray-700 rounded-lg">
-                                <i class="fas fa-tachometer-alt text-yellow-400"></i>
-                                <span>Painel de Controlo</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition">
-                                <i class="fas fa-wallet text-yellow-400"></i>
-                                <span>Meus Investimentos</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition">
-                                <i class="fas fa-money-bill-wave text-yellow-400"></i>
-                                <span>Retiradas</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition">
-                                <i class="fas fa-users text-yellow-400"></i>
-                                <span>Minha Rede</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition">
-                                <i class="fas fa-link text-yellow-400"></i>
-                                <span>Link de Indicação</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition">
-                                <i class="fas fa-history text-yellow-400"></i>
-                                <span>Histórico</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-700 rounded-lg transition">
-                                <i class="fas fa-cog text-yellow-400"></i>
-                                <span>Configurações</span>
-                            </a>
-                        </nav>
-                    </div>
-
-                    <!-- Main Content -->
-                    <div class="lg:col-span-3 space-y-6">
-                        <!-- Stats Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-gray-800 rounded-lg p-6">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-400">Saldo Disponível</p>
-                                        <p id="availableBalance" class="text-2xl font-bold">0 KZ</p>
-                                    </div>
-                                    <div class="bg-yellow-500 text-black p-3 rounded-lg">
-                                        <i class="fas fa-wallet text-xl"></i>
-                                    </div>
+                        <div class="bg-gray-900 rounded-lg p-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Resumo do Investimento</h3>
+                            <div class="space-y-4 mb-6">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Valor do Investimento:</span>
+                                    <span id="investmentAmount" class="text-white">0 KZ</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Retorno Diário:</span>
+                                    <span id="dailyReturn" class="text-white">0 KZ (0%)</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Duração:</span>
+                                    <span class="text-white">60 dias</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Total de Retorno:</span>
+                                    <span id="totalReturn" class="text-white">0 KZ</span>
                                 </div>
                             </div>
-                            <div class="bg-gray-800 rounded-lg p-6">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-400">Investimento Total</p>
-                                        <p id="totalInvestment" class="text-2xl font-bold">0 KZ</p>
-                                    </div>
-                                    <div class="bg-red-600 text-white p-3 rounded-lg">
-                                        <i class="fas fa-chart-line text-xl"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bg-gray-800 rounded-lg p-6">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-gray-400">Ganhos Totais</p>
-                                        <p id="totalEarnings" class="text-2xl font-bold">0 KZ</p>
-                                    </div>
-                                    <div class="bg-green-500 text-white p-3 rounded-lg">
-                                        <i class="fas fa-money-bill-wave text-xl"></i>
-                                    </div>
-                                </div>
-                            </div>
+                            <button id="confirmInvestmentBtn" class="w-full btn-primary py-3 rounded-md font-medium">Confirmar Investimento</button>
                         </div>
 
-                        <!-- Investment Section -->
-                        <div class="bg-gray-800 rounded-lg p-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-xl font-bold">Meus Investimentos</h2>
-                                <button onclick="showInvestModal()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg transition">
-                                    Novo Investimento
+                        <div class="bg-gray-900 rounded-lg p-6 mt-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Informações Bancárias</h3>
+                            <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                                <p class="text-sm text-gray-300 mb-2">Banco: BAI</p>
+                                <p class="text-sm text-gray-300 mb-2">IBAN: 004300001029490210111</p>
+                                <p class="text-sm text-gray-300">Titular: Wilma Ferreira Agostinho</p>
+                            </div>
+                            <p class="text-sm text-gray-400">Após realizar o pagamento, envie o comprovante para o WhatsApp: <span class="text-yellow-500">+244 937 591 295</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdraw Tab -->
+            <div id="withdrawTab" class="tab-content">
+                <h2 class="text-2xl font-bold text-white mb-6">Solicitar Saque</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="bg-gray-900 rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Informações do Saque</h3>
+                            <div class="mb-4">
+                                <label for="withdrawAmount" class="block mb-2 text-sm font-medium text-gray-400">Valor do Saque (KZ)</label>
+                                <input type="number" id="withdrawAmount" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="Digite o valor">
+                                <p class="text-xs text-gray-500 mt-1">Saldo disponível: <span id="availableWithdrawBalance" class="text-yellow-500">0 KZ</span></p>
+                            </div>
+                            <div class="mb-4">
+                                <label for="withdrawMethod" class="block mb-2 text-sm font-medium text-gray-400">Método de Pagamento</label>
+                                <select id="withdrawMethod" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                    <option value="bank">Transferência Bancária</option>
+                                    <option value="mobile">Carteira Digital (M-Pesa, etc)</option>
+                                </select>
+                            </div>
+                            <div id="bankDetails" class="mb-4">
+                                <label for="bankAccount" class="block mb-2 text-sm font-medium text-gray-400">Dados Bancários</label>
+                                <input type="text" id="bankAccount" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 mb-2" placeholder="Nome do Banco">
+                                <input type="text" id="bankIBAN" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="IBAN/Número da Conta">
+                            </div>
+                            <div id="mobileDetails" class="mb-4 hidden">
+                                <label for="mobileNumber" class="block mb-2 text-sm font-medium text-gray-400">Número da Carteira Digital</label>
+                                <input type="text" id="mobileNumber" class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="+244 XXX XXX XXX">
+                            </div>
+                            <button id="requestWithdrawBtn" class="w-full btn-primary py-3 rounded-md font-medium">Solicitar Saque</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="bg-gray-900 rounded-lg p-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Histórico de Saques</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-800">
+                                            <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Data</th>
+                                            <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Valor</th>
+                                            <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="withdrawHistory">
+                                        <tr>
+                                            <td colspan="3" class="py-8 text-center text-gray-500">Nenhum saque realizado</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referrals Tab -->
+            <div id="referralsTab" class="tab-content">
+                <h2 class="text-2xl font-bold text-white mb-6">Programa de Indicações</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <div class="bg-gray-900 rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Seu Link de Indicação</h3>
+                            <div class="flex items-center mb-4">
+                                <input type="text" id="referralLink" class="flex-grow px-4 py-2 bg-gray-800 border border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-yellow-500" value="https://maisangola.com/ref/123456" readonly>
+                                <button onclick="copyReferralLink()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-r-md">
+                                    <i class="fas fa-copy"></i>
                                 </button>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead>
-                                        <tr class="text-left border-b border-gray-700">
-                                            <th class="pb-3">Plano</th>
-                                            <th class="pb-3">Valor</th>
-                                            <th class="pb-3">Início</th>
-                                            <th class="pb-3">Fim</th>
-                                            <th class="pb-3">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="investmentsTable">
-                                        <!-- Investments will be added here by JavaScript -->
-                                        <tr>
-                                            <td colspan="5" class="py-8 text-center text-gray-500">
-                                                Nenhum investimento encontrado. <button onclick="showInvestModal()" class="text-yellow-400 hover:underline">Faça seu primeiro investimento</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Referral Section -->
-                        <div class="bg-gray-800 rounded-lg p-6">
-                            <h2 class="text-xl font-bold mb-6">Minha Rede</h2>
-                            <div class="mb-6">
-                                <h3 class="text-lg font-semibold mb-2">Seu Link de Indicação</h3>
-                                <div class="flex">
-                                    <input type="text" id="referralLink" value="https://maisangola.com/ref/username123" class="bg-gray-700 px-4 py-2 rounded-l-lg focus:outline-none w-full" readonly>
-                                    <button onclick="copyReferralLink()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-r-lg transition">
-                                        Copiar
-                                    </button>
-                                </div>
-                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Compartilhe seu link e ganhe 40% do valor investido por cada pessoa que se cadastrar e investir usando seu link.</p>
+                            
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                <div class="bg-gray-700 p-4 rounded-lg">
-                                    <p class="text-gray-400">Indicações</p>
-                                    <p id="referralCount" class="text-xl font-bold">0</p>
+                                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                                    <p class="text-sm text-gray-400 mb-1">Indicações</p>
+                                    <p id="totalReferrals" class="text-xl font-bold text-white">0</p>
                                 </div>
-                                <div class="bg-gray-700 p-4 rounded-lg">
-                                    <p class="text-gray-400">Bônus de Indicação</p>
-                                    <p id="referralBonus" class="text-xl font-bold">0 KZ</p>
+                                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                                    <p class="text-sm text-gray-400 mb-1">Indicações Ativas</p>
+                                    <p id="activeReferrals" class="text-xl font-bold text-white">0</p>
                                 </div>
-                                <div class="bg-gray-700 p-4 rounded-lg">
-                                    <p class="text-gray-400">Bônus de Investimento</p>
-                                    <p id="investmentBonus" class="text-xl font-bold">0 KZ</p>
+                                <div class="bg-gray-800 rounded-lg p-4 text-center">
+                                    <p class="text-sm text-gray-400 mb-1">Bônus Ganhos</p>
+                                    <p id="referralEarnings" class="text-xl font-bold text-white">0 KZ</p>
                                 </div>
                             </div>
+                            
+                            <h4 class="text-md font-bold text-white mb-3">Compartilhar em:</h4>
+                            <div class="flex space-x-3">
+                                <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                    <i class="fab fa-whatsapp text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                    <i class="fab fa-facebook-f text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                    <i class="fab fa-telegram-plane text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center text-yellow-500 hover:bg-yellow-500 hover:text-black">
+                                    <i class="fas fa-envelope text-xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="bg-gray-900 rounded-lg p-6">
+                            <h3 class="text-lg font-bold text-white mb-4">Suas Indicações</h3>
                             <div class="overflow-x-auto">
-                                <table class="w-full">
+                                <table class="min-w-full">
                                     <thead>
-                                        <tr class="text-left border-b border-gray-700">
-                                            <th class="pb-3">Nome</th>
-                                            <th class="pb-3">Data</th>
-                                            <th class="pb-3">Status</th>
-                                            <th class="pb-3">Bônus</th>
+                                        <tr class="border-b border-gray-800">
+                                            <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Nome</th>
+                                            <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Data</th>
+                                            <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="referralsTable">
-                                        <!-- Referrals will be added here by JavaScript -->
+                                    <tbody id="referralList">
                                         <tr>
-                                            <td colspan="4" class="py-8 text-center text-gray-500">
-                                                Nenhuma indicação encontrada. Compartilhe seu link para ganhar bônus!
-                                            </td>
+                                            <td colspan="3" class="py-8 text-center text-gray-500">Nenhuma indicação encontrada</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -745,233 +794,552 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Invest Modal -->
-    <div id="investModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="blur-effect rounded-lg p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Novo Investimento</h2>
-                <button onclick="hideInvestModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            <!-- Transactions Tab -->
+            <div id="transactionsTab" class="tab-content">
+                <h2 class="text-2xl font-bold text-white mb-6">Histórico de Transações</h2>
+                <div class="bg-gray-900 rounded-lg p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">Todas as Transações</h3>
+                            <p class="text-sm text-gray-400">Visualize seu histórico de depósitos, retiradas e ganhos</p>
+                        </div>
+                        <div class="relative">
+                            <select id="transactionFilter" class="appearance-none bg-gray-800 border border-gray-700 text-white pl-4 pr-8 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                                <option value="all">Todas</option>
+                                <option value="deposit">Depósitos</option>
+                                <option value="withdraw">Retiradas</option>
+                                <option value="profit">Lucros</option>
+                                <option value="bonus">Bônus</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr class="border-b border-gray-800">
+                                    <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Data</th>
+                                    <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Descrição</th>
+                                    <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Valor</th>
+                                    <th class="py-3 px-4 text-left text-gray-400 font-medium text-sm">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionHistory">
+                                <tr>
+                                    <td colspan="4" class="py-8 text-center text-gray-500">Nenhuma transação encontrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <form id="investForm" class="space-y-4">
-                <div>
-                    <label for="investPlan" class="block mb-2">Plano de Investimento</label>
-                    <select id="investPlan" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                        <option value="7000">PLANO INICIAL - 7.000 KZ</option>
-                        <option value="14000">PLANO PRATA - 14.000 KZ</option>
-                        <option value="28000">PLANO OURO - 28.000 KZ</option>
-                        <option value="56000">PLANO DIAMANTE - 56.000 KZ</option>
-                        <option value="112000">PLANO VIP - 112.000 KZ</option>
-                        <option value="224000">PLANO PREMIUM - 224.000 KZ</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="investAmount" class="block mb-2">Valor a Investir (KZ)</label>
-                    <input type="number" id="investAmount" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500" value="7000" min="7000" step="7000">
-                </div>
-                <div class="bg-gray-800 p-4 rounded-lg mb-4">
-                    <p class="font-bold">IBAN: 004300001029490210111</p>
-                    <p>Titular: MAIS ANGOLA INVESTIMENTOS</p>
-                </div>
-                <div>
-                    <p class="mb-2">Após realizar o pagamento, envie o comprovativo para:</p>
-                    <div class="bg-gray-800 p-4 rounded-lg mb-4">
-                        <p class="font-bold">WhatsApp: +244 937 591 295</p>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <input type="checkbox" id="investTerms" class="mr-2" required>
-                    <label for="investTerms">Confirmo que enviei o comprovativo</label>
-                </div>
-                <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition">
-                    Confirmar Investimento
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Withdraw Modal -->
-    <div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="blur-effect rounded-lg p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Solicitar Retirada</h2>
-                <button onclick="hideWithdrawModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
-            </div>
-            <form id="withdrawForm" class="space-y-4">
-                <div>
-                    <label for="withdrawAmount" class="block mb-2">Valor a Retirar (KZ)</label>
-                    <input type="number" id="withdrawAmount" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500" min="5000" step="1000">
-                </div>
-                <div>
-                    <label for="withdrawMethod" class="block mb-2">Método de Pagamento</label>
-                    <select id="withdrawMethod" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                        <option value="bank">Transferência Bancária</option>
-                        <option value="mobile">Dinheiro Móvel</option>
-                    </select>
-                </div>
-                <div id="bankDetails" class="space-y-2">
-                    <div>
-                        <label for="bankName" class="block mb-1">Banco</label>
-                        <input type="text" id="bankName" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                    </div>
-                    <div>
-                        <label for="accountName" class="block mb-1">Nome da Conta</label>
-                        <input type="text" id="accountName" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                    </div>
-                    <div>
-                        <label for="accountNumber" class="block mb-1">Número da Conta/IBAN</label>
-                        <input type="text" id="accountNumber" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                    </div>
-                </div>
-                <div id="mobileDetails" class="hidden space-y-2">
-                    <div>
-                        <label for="mobileProvider" class="block mb-1">Operadora</label>
-                        <select id="mobileProvider" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                            <option value="unitel">Unitel</option>
-                            <option value="movicel">Movicel</option>
-                            <option value="africell">Africell</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="mobileNumber" class="block mb-1">Número de Telefone</label>
-                        <input type="text" id="mobileNumber" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                    </div>
-                </div>
-                <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg transition">
-                    Solicitar Retirada
-                </button>
-            </form>
         </div>
     </div>
 
     <script>
-        // Mobile menu toggle
+        // Sample user data (in a real app, this would come from a database)
+        let users = [];
+        let currentUser = null;
+        let investments = [];
+        let transactions = [];
+        let referrals = [];
+        let withdrawals = [];
+
+        // DOM Elements
+        const authContent = document.getElementById('authContent');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const dashboardMobileMenuBtn = document.getElementById('dashboardMobileMenuBtn');
+        const dashboardMobileMenu = document.getElementById('dashboardMobileMenu');
+        const alertNotification = document.getElementById('alertNotification');
+        const alertMessage = document.getElementById('alertMessage');
+        const withdrawMethod = document.getElementById('withdrawMethod');
+        const bankDetails = document.getElementById('bankDetails');
+        const mobileDetails = document.getElementById('mobileDetails');
+
+        // Tab elements
+        const tabContents = document.querySelectorAll('.tab-content');
+        const dashboardTab = document.getElementById('dashboardTab');
+        const investTab = document.getElementById('investTab');
+        const withdrawTab = document.getElementById('withdrawTab');
+        const referralsTab = document.getElementById('referralsTab');
+        const transactionsTab = document.getElementById('transactionsTab');
+
+        // Investment elements
+        const investmentPlans = document.querySelectorAll('input[name="investmentPlan"]');
+        const investmentAmount = document.getElementById('investmentAmount');
+        const dailyReturn = document.getElementById('dailyReturn');
+        const totalReturn = document.getElementById('totalReturn');
+        const confirmInvestmentBtn = document.getElementById('confirmInvestmentBtn');
+        const activeInvestments = document.getElementById('activeInvestments');
+
+        // Withdraw elements
+        const withdrawAmount = document.getElementById('withdrawAmount');
+        const availableWithdrawBalance = document.getElementById('availableWithdrawBalance');
+        const requestWithdrawBtn = document.getElementById('requestWithdrawBtn');
+        const withdrawHistory = document.getElementById('withdrawHistory');
+
+        // Referral elements
+        const referralLink = document.getElementById('referralLink');
+        const totalReferrals = document.getElementById('totalReferrals');
+        const activeReferrals = document.getElementById('activeReferrals');
+        const referralEarnings = document.getElementById('referralEarnings');
+        const referralList = document.getElementById('referralList');
+
+        // Transaction elements
+        const transactionFilter = document.getElementById('transactionFilter');
+        const transactionHistory = document.getElementById('transactionHistory');
+
+        // Dashboard elements
+        const availableBalance = document.getElementById('availableBalance');
+        const totalInvested = document.getElementById('totalInvested');
+        const totalProfit = document.getElementById('totalProfit');
+        const userNameNav = document.getElementById('userNameNav');
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user is logged in
+            const loggedInUser = localStorage.getItem('currentUser');
+            if (loggedInUser) {
+                currentUser = JSON.parse(loggedInUser);
+                authContent.classList.add('hidden');
+                dashboardContent.classList.remove('hidden');
+                updateDashboard();
+            }
+
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            dashboardMobileMenuBtn.addEventListener('click', toggleDashboardMobileMenu);
+
+            // Login form submission
+            loginForm.addEventListener('submit', handleLogin);
+
+            // Register form submission
+            registerForm.addEventListener('submit', handleRegister);
+
+            // Investment plan selection
+            investmentPlans.forEach(plan => {
+                plan.addEventListener('change', updateInvestmentSummary);
+            });
+
+            // Confirm investment
+            confirmInvestmentBtn.addEventListener('click', confirmInvestment);
+
+            // Withdraw method change
+            withdrawMethod.addEventListener('change', toggleWithdrawDetails);
+
+            // Request withdraw
+            requestWithdrawBtn.addEventListener('click', requestWithdraw);
+
+            // Transaction filter
+            transactionFilter.addEventListener('change', filterTransactions);
+
+            // Copy referral link
+            if (referralLink) {
+                referralLink.addEventListener('click', function() {
+                    this.select();
+                });
+            }
+        });
+
+        // Functions
+        function showLoginModal() {
+            registerModal.classList.add('hidden');
+            loginModal.classList.remove('hidden');
+        }
+
+        function showRegisterModal() {
+            loginModal.classList.add('hidden');
+            registerModal.classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
         function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('hidden');
         }
 
-        // Modal functions
-        function showLogin() {
-            document.getElementById('loginModal').classList.remove('hidden');
+        function toggleDashboardMobileMenu() {
+            dashboardMobileMenu.classList.toggle('hidden');
         }
 
-        function hideLogin() {
-            document.getElementById('loginModal').classList.add('hidden');
-        }
-
-        function showRegister() {
-            document.getElementById('registerModal').classList.remove('hidden');
-        }
-
-        function hideRegister() {
-            document.getElementById('registerModal').classList.add('hidden');
-        }
-
-        function switchToRegister() {
-            hideLogin();
-            showRegister();
-        }
-
-        function switchToLogin() {
-            hideRegister();
-            showLogin();
-        }
-
-        // Investment modal
-        function showInvestModal() {
-            document.getElementById('investModal').classList.remove('hidden');
-        }
-
-        function hideInvestModal() {
-            document.getElementById('investModal').classList.add('hidden');
-        }
-
-        // Withdraw modal
-        function showWithdrawModal() {
-            document.getElementById('withdrawModal').classList.remove('hidden');
-        }
-
-        function hideWithdrawModal() {
-            document.getElementById('withdrawModal').classList.add('hidden');
-        }
-
-        // Update invest amount when plan changes
-        document.getElementById('investPlan').addEventListener('change', function() {
-            document.getElementById('investAmount').value = this.value;
-        });
-
-        // Toggle payment method details
-        document.getElementById('withdrawMethod').addEventListener('change', function() {
-            if (this.value === 'bank') {
-                document.getElementById('bankDetails').classList.remove('hidden');
-                document.getElementById('mobileDetails').classList.add('hidden');
-            } else {
-                document.getElementById('bankDetails').classList.add('hidden');
-                document.getElementById('mobileDetails').classList.remove('hidden');
-            }
-        });
-
-        // Copy referral link
-        function copyReferralLink() {
-            const link = document.getElementById('referralLink');
-            link.select();
-            document.execCommand('copy');
-            alert('Link copiado para a área de transferência!');
-        }
-
-        // Form submissions
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Simulate login
-            document.getElementById('userName').textContent = document.getElementById('loginEmail').value.split('@')[0];
-            document.getElementById('userBalance').textContent = '0 KZ';
+        function showAlert(message, type = 'info') {
+            alertMessage.textContent = message;
+            alertNotification.classList.remove('hidden');
             
-            // Hide modals and show dashboard
-            hideLogin();
-            document.getElementById('userDashboard').classList.remove('hidden-content');
-            document.body.classList.add('overflow-hidden');
-        });
-
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Conta criada com sucesso! Faça login para continuar.');
-            hideRegister();
-            showLogin();
-        });
-
-        document.getElementById('investForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Seu investimento foi registrado. Aguarde a confirmação do pagamento.');
-            hideInvestModal();
-        });
-
-        document.getElementById('withdrawForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Sua solicitação de retirada foi enviada. Processaremos em até 24 horas.');
-            hideWithdrawModal();
-        });
-
-        // Logout function
-        function logout() {
-            document.getElementById('userDashboard').classList.add('hidden-content');
-            document.body.classList.remove('overflow-hidden');
+            // Remove after 3 seconds
+            setTimeout(() => {
+                alertNotification.classList.add('hidden');
+            }, 3000);
         }
 
-        // Simulate some data for the dashboard
-        window.addEventListener('DOMContentLoaded', function() {
-            // Only if user is logged in (dashboard is visible)
-            if (!document.getElementById('userDashboard').classList.contains('hidden-content')) {
-                document.getElementById('availableBalance').textContent = '0 KZ';
-                document.getElementById('totalInvestment').textContent = '0 KZ';
-                document.getElementById('totalEarnings').textContent = '0 KZ';
-                document.getElementById('referralCount').textContent = '0';
-                document.getElementById('referralBonus').textContent = '0 KZ';
-                document.getElementById('investmentBonus').textContent = '0 KZ';
+        function showTab(tabName) {
+            // Hide all tabs
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            switch(tabName) {
+                case 'dashboard':
+                    dashboardTab.classList.add('active');
+                    break;
+                case 'invest':
+                    investTab.classList.add('active');
+                    break;
+                case 'withdraw':
+                    withdrawTab.classList.add('active');
+                    updateWithdrawTab();
+                    break;
+                case 'referrals':
+                    referralsTab.classList.add('active');
+                    updateReferralsTab();
+                    break;
+                case 'transactions':
+                    transactionsTab.classList.add('active');
+                    updateTransactionsTab();
+                    break;
             }
-        });
-    </script>
-</body>
+
+            // Close mobile menu if open
+            dashboardMobileMenu.classList.add('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Find user
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                loginModal.classList.add('hidden');
+                authContent.classList.add('hidden');
+                dashboardContent.classList.remove('hidden');
+                updateDashboard();
+                showAlert('Login realizado com sucesso!', 'success');
+            } else {
+                showAlert('Email ou senha incorretos!', 'error');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const phone = document.getElementById('registerPhone').value;
+            const password = document.getElementById('registerPassword').value;
+            const referralCode = document.getElementById('registerReferral').value;
+
+            // Check if user already exists
+            const userExists = users.some(u => u.email === email);
+            
+            if (userExists) {
+                showAlert('Este email já está registrado!', 'error');
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                email,
+                phone,
+                password,
+                balance: 0,
+                totalInvested: 0,
+                totalProfit: 0,
+                referralCode: generateReferralCode(),
+                referredBy: referralCode || null,
+                joinDate: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            registerModal.classList.add('hidden');
+            authContent.classList.add('hidden');
+            dashboardContent.classList.remove('hidden');
+            updateDashboard();
+            showAlert('Conta criada com sucesso!', 'success');
+
+            // If referred by someone, add to referrals
+            if (referralCode) {
+                const referrer = users.find(u => u.referralCode === referralCode);
+                if (referrer) {
+                    referrals.push({
+                        id: Date.now().toString(),
+                        referrerId: referrer.id,
+                        refereeId: newUser.id,
+                        name: newUser.name,
+                        date: new Date().toISOString(),
+                        status: 'pending',
+                        earned: 0
+                    });
+                }
+            }
+        }
+
+        function generateReferralCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            dashboardContent.classList.add('hidden');
+            authContent.classList.remove('hidden');
+            showAlert('Você saiu da sua conta.', 'info');
+        }
+
+        function updateDashboard() {
+            if (!currentUser) return;
+
+            // Update user info
+            userNameNav.textContent = currentUser.name.split(' ')[0];
+            
+            // Update balances
+            availableBalance.textContent = `${currentUser.balance.toLocaleString()} KZ`;
+            totalInvested.textContent = `${currentUser.totalInvested.toLocaleString()} KZ`;
+            totalProfit.textContent = `${currentUser.totalProfit.toLocaleString()} KZ`;
+
+            // Update active investments
+            const userInvestments = investments.filter(inv => inv.userId === currentUser.id && inv.status === 'active');
+            
+            if (userInvestments.length > 0) {
+                activeInvestments.innerHTML = '';
+                userInvestments.forEach(inv => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-800';
+                    row.innerHTML = `
+                        <td class="py-4 px-4 text-white">Plano de ${inv.amount.toLocaleString()} KZ</td>
+                        <td class="py-4 px-4 text-white">${inv.amount.toLocaleString()} KZ</td>
+                        <td class="py-4 px-4 text-white">${new Date(inv.startDate).toLocaleDateString()}</td>
+                        <td class="py-4 px-4 text-white">${new Date(inv.endDate).toLocaleDateString()}</td>
+                        <td class="py-4 px-4 text-white">
+                            <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Ativo</span>
+                        </td>
+                    `;
+                    activeInvestments.appendChild(row);
+                });
+            }
+        }
+
+        function updateInvestmentSummary() {
+            const selectedPlan = document.querySelector('input[name="investmentPlan"]:checked');
+            
+            if (selectedPlan) {
+                const amount = parseInt(selectedPlan.value);
+                const daily = amount * 0.4;
+                const total = daily * 60;
+                
+                investmentAmount.textContent = `${amount.toLocaleString()} KZ`;
+                dailyReturn.textContent = `${daily.toLocaleString()} KZ (40%)`;
+                totalReturn.textContent = `${total.toLocaleString()} KZ`;
+            }
+        }
+
+        function confirmInvestment() {
+            const selectedPlan = document.querySelector('input[name="investmentPlan"]:checked');
+            
+            if (!selectedPlan) {
+                showAlert('Selecione um plano de investimento!', 'error');
+                return;
+            }
+
+            const amount = parseInt(selectedPlan.value);
+            
+            // In a real app, this would be a server-side verification
+            showAlert(`Para completar seu investimento de ${amount.toLocaleString()} KZ, faça a transferência para:\n\nBanco: BAI\nIBAN: 004300001029490210111\nTitular: Wilma Ferreira Agostinho\n\nEnvie o comprovante para o WhatsApp: +244 937 591 295`, 'info');
+            
+            // For demo purposes, we'll simulate an investment after "payment"
+            setTimeout(() => {
+                createInvestment(amount);
+            }, 5000);
+        }
+
+        function createInvestment(amount) {
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(startDate.getDate() + 60);
+            
+            const newInvestment = {
+                id: Date.now().toString(),
+                userId: currentUser.id,
+                amount,
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
+                dailyProfit: amount * 0.4,
+                status: 'pending',
+                paymentVerified: false
+            };
+            
+            investments.push(newInvestment);
+            
+            // For demo, we'll auto-verify the payment
+            setTimeout(() => {
+                verifyPayment(newInvestment.id);
+            }, 2000);
+            
+            showAlert(`Investimento de ${amount.toLocaleString()} KZ criado com sucesso! Aguarde a verificação do pagamento.`, 'success');
+        }
+
+        function verifyPayment(investmentId) {
+            const investment = investments.find(inv => inv.id === investmentId);
+            if (investment) {
+                investment.paymentVerified = true;
+                investment.status = 'active';
+                
+                // Update user balance and totals
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex].totalInvested += investment.amount;
+                    currentUser = users[userIndex];
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                }
+                
+                // Add transaction
+                transactions.push({
+                    id: Date.now().toString(),
+                    userId: currentUser.id,
+                    type: 'deposit',
+                    amount: investment.amount,
+                    date: new Date().toISOString(),
+                    description: `Investimento inicial - Plano de ${investment.amount.toLocaleString()} KZ`,
+                    status: 'completed'
+                });
+                
+                updateDashboard();
+                showAlert(`Pagamento verificado! Seu investimento de ${investment.amount.toLocaleString()} KZ está agora ativo.`, 'success');
+                
+                // Start daily profits (simulated)
+                startDailyProfits(investment);
+            }
+        }
+
+        function startDailyProfits(investment) {
+            // In a real app, this would be handled server-side with cron jobs
+            // For demo, we'll simulate daily profits
+            let daysPassed = 0;
+            const profitInterval = setInterval(() => {
+                if (daysPassed >= 60 || investment.status !== 'active') {
+                    clearInterval(profitInterval);
+                    investment.status = 'completed';
+                    return;
+                }
+                
+                daysPassed++;
+                
+                // Add profit to user balance
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    users[userIndex].balance += investment.dailyProfit;
+                    users[userIndex].totalProfit += investment.dailyProfit;
+                    currentUser = users[userIndex];
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    // Add transaction
+                    transactions.push({
+                        id: Date.now().toString(),
+                        userId: currentUser.id,
+                        type: 'profit',
+                        amount: investment.dailyProfit,
+                        date: new Date().toISOString(),
+                        description: `Lucro diário - Investimento de ${investment.amount.toLocaleString()} KZ (Dia ${daysPassed})`,
+                        status: 'completed'
+                    });
+                    
+                    updateDashboard();
+                    
+                    // If this is the first day and user was referred, give bonus to referrer
+                    if (daysPassed === 1 && currentUser.referredBy) {
+                        const referrer = users.find(u => u.referralCode === currentUser.referredBy);
+                        if (referrer) {
+                            const referralBonus = investment.amount * 0.4;
+                            referrer.balance += referralBonus;
+                            
+                            // Update referral record
+                            const referral = referrals.find(ref => ref.refereeId === currentUser.id);
+                            if (referral) {
+                                referral.status = 'active';
+                                referral.earned = referralBonus;
+                            }
+                            
+                            // Add transaction for referrer
+                            transactions.push({
+                                id: Date.now().toString(),
+                                userId: referrer.id,
+                                type: 'bonus',
+                                amount: referralBonus,
+                                date: new Date().toISOString(),
+                                description: `Bônus de indicação - ${currentUser.name} investiu ${investment.amount.toLocaleString()} KZ`,
+                                status: 'completed'
+                            });
+                            
+                            // If referrer is current user, update UI
+                            if (referrer.id === currentUser.id) {
+                                updateDashboard();
+                                updateReferralsTab();
+                            }
+                        }
+                    }
+                }
+            }, 10000); // 10 seconds for demo (would be 24 hours in real app)
+        }
+
+        function toggleWithdrawDetails() {
+            if (withdrawMethod.value === 'bank') {
+                bankDetails.classList.remove('hidden');
+                mobileDetails.classList.add('hidden');
+            } else {
+                bankDetails.classList.add('hidden');
+                mobileDetails.classList.remove('hidden');
+            }
+        }
+
+        function updateWithdrawTab() {
+            if (!currentUser) return;
+            
+            availableWithdrawBalance.textContent = `${currentUser.balance.toLocaleString()} KZ`;
+            
+            // Update withdraw history
+            const userWithdrawals = withdrawals.filter(w => w.userId === currentUser.id);
+            
+            if (userWithdrawals.length > 0) {
+                withdrawHistory.innerHTML = '';
+                userWithdrawals.forEach(w => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-gray-800';
+                    
+                    let statusClass = 'bg-yellow-500';
+                    if (w.status === 'completed') statusClass = 'bg-green-500';
+                    if (w.status === 'rejected') statusClass = 'bg-red-500';
+                    
+                    row.innerHTML = `
+                        <td class="py-4 px-4 text-white text-sm">${new Date(w.date).toLocaleDateString()}</td>
+                        <td class="py-4 px-4 text-white text-sm">${w.amount.toLocaleString()} KZ</td>
+                        <td class="py-4 px-4 text-white text-sm">
+                            <span class="${statusClass} text-white text-xs px-2 py-1 rounded-full capitalize">${w.status}</span>
+                        </td>
+                    `;
+                    withdrawHistory.appendChild(row);
+                });
+            }
+        }
+
+        function requestWithdraw() {
+            const amount = parse
 </html>
